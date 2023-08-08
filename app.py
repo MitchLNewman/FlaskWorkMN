@@ -13,6 +13,16 @@ class Person(db.Model):
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
 
+class Countries(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), nullable=False)
+    cities = db.relationship('Cities', backref='country') 
+
+class Cities(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), nullable=False)
+    country_id = db.Column(db.Integer, db.ForeignKey('countries.id'), nullable=False)
+
 # can use a double decorator to add multiple routes to a function
 @app.route("/")
 @app.route("/home")
