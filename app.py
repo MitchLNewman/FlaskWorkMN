@@ -1,12 +1,42 @@
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
-import os
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:AMSroot@localhost:3306/MitchDB"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
+app.config['SECRET_KEY'] = 'YOUR_SECRET_KEY'
+
 db = SQLAlchemy(app)
+
+#forms exercise 
+
+class BasicForm(FlaskForm):
+    first_name = StringField('First Name')
+    last_name = StringField('Last Name')
+    submit = SubmitField('Add Name')
+
+    @app.route('/', methods=['GET', 'POST'])
+    @app.route('/home', methods=['GET', 'POST'])
+    
+    def register():
+            message = ""
+            form = BasicForm()
+
+            if request.method == 'POST':
+                first_name = form.first_name.data
+                last_name = form.last_name.data
+
+            if len(first_name) == 0 or len(last_name) == 0:
+                message = "Please supply both first and last name"
+            else:
+                message = f'Thank you, {first_name} {last_name}'
+
+            return render_template('home.html', form=form, message=message)
+
+# db exercise
 
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
